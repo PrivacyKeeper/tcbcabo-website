@@ -21,10 +21,10 @@ const sections = [
     icon: Clock,
     title: 'Cancellation Policy',
     items: [
-      'Cancellations made more than 48 hours before the scheduled charter: Full refund of all payments received.',
-      'Cancellations made within 48 hours of the scheduled charter: 80% refund of all payments received — OR the full amount may be held as credit toward a future charter at a mutually agreed-upon date.',
+      'All cancellations, regardless of when they are made, are subject to a non-refundable 20% cancellation fee based on the total charter cost.',
+      'The remaining 80% will be refunded to the original form of payment.',
+      'Alternatively, you may reschedule at no charge and keep 100% of your payment applied to the new date — you only lose the 20% if you cancel outright rather than rescheduling.',
       'No-shows: No refund will be issued.',
-      `The choice between an 80% refund or rescheduling credit is at the client's discretion for cancellations within 48 hours.`,
     ],
   },
   {
@@ -41,10 +41,9 @@ const sections = [
     icon: Shield,
     title: 'Rescheduling',
     items: [
-      'Rescheduling requests made more than 15 days before the charter date will be accommodated subject to availability at no additional fee.',
-      'Rescheduling requests made within 15 days of the charter date are subject to a 10% rescheduling fee.',
-      'Rescheduling is limited to one change per booking. Additional changes will be treated as a new cancellation and rebooking.',
-      'All rescheduled charters must occur within 12 months of the original booking date.',
+      'You may reschedule your charter to a new date at no charge, subject to availability. If you complete the rescheduled trip, there is no loss and no fee.',
+      'Rescheduled charters must occur within 12 months of the original booking date.',
+      'The 20% cancellation fee only applies if you cancel outright — including cancelling a rescheduled trip instead of taking it.',
     ],
   },
   {
