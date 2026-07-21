@@ -207,3 +207,33 @@ export const GALLERY_IMAGES = [
   { src: '/images/gallery/boat-night-leds.jpg', alt: 'TCB illuminated with blue LEDs at night dock', category: 'boat' },
   { src: '/images/gallery/fishing-rods-closeup.jpg', alt: 'Close-up of professional fishing rod setup', category: 'fishing' },
 ];
+
+export const CASH_FLOW_PACKAGE = {
+  name: "Cash Flow — 26' Angler",
+  description: 'Private fishing charters for up to 4 guests',
+  options: [
+    {
+      duration: '5 Hours',
+      price: 950,
+      startTime: '6:00 AM',
+      details: 'Half-day private fishing charter',
+    },
+    {
+      duration: '8 Hours',
+      price: 1400,
+      startTime: '6:00 AM',
+      details: 'Full-day private fishing charter',
+    },
+  ],
+  inclusions: [
+    'Professional captain and crew',
+    'Fishing equipment',
+    'Bait and terminal tackle',
+    'Catch cleaning',
+  ],
+  notes: [
+    'Maximum capacity: 4 guests.',
+    'Cash Flow is available for fishing charters only.',
+    'A 50% deposit secures the reservation when booking 30 or more days in advance.',
+  ],
+};

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { CHARTER_PACKAGES } from '@/lib/charter-data';
+import { CHARTER_PACKAGES, CASH_FLOW_PACKAGE } from '@/lib/charter-data';
 import { CalendarDays, Check, Clock, Users, DollarSign, Sparkles, Fish, Eye, Sunset, PartyPopper, Utensils, Info } from 'lucide-react';
 
 const SECTION_ICONS: Record<string, any> = {
@@ -170,6 +170,11 @@ export function ChartersContent() {
         {Object.entries(CHARTER_PACKAGES ?? {}).map(([key, data]: [string, any]) => (
           <CharterSection key={key} sectionKey={key} data={data} />
         ))}
+
+        <CharterSection
+          sectionKey="cash-flow"
+          data={CASH_FLOW_PACKAGE}
+        />
       </div>
 
       <div className="text-center mt-16">

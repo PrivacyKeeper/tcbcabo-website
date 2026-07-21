@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Phone, Anchor, Fish, Camera, Ship, CalendarDays, Send } from 'lucide-react';
+import { Menu, X, Phone, Anchor, Fish, Camera, Ship, CalendarDays, Home, Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const NAV_LINKS = [
@@ -14,6 +14,7 @@ const NAV_LINKS = [
   { href: '/gallery', label: 'Gallery', icon: Camera },
   { href: '/the-boat', label: 'The Boat', icon: Ship },
   { href: '/book', label: 'Book Now', icon: CalendarDays },
+  { href: '/villa', label: 'TCB Villa', icon: Home },
   { href: '/contact', label: 'Contact', icon: Send },
 ];
 

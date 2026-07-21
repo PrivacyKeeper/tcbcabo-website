@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Calendar } from '@/components/ui/calendar';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,15 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { CalendarDays, Check, DollarSign, Clock, Users, AlertCircle, Loader2 } from 'lucide-react';
-import { CHARTER_PACKAGES } from '@/lib/charter-data';
+import { CHARTER_PACKAGES, CASH_FLOW_PACKAGE } from '@/lib/charter-data';
+
+type Boat = {
+  id: string;
+  name: string;
+  slug: string;
+  capacity: number | null;
+  imageUrl: string | null;
+};
 
 const CHARTER_TYPES = [
   { key: 'fishing', label: 'Fishing Charter' },
@@ -19,6 +28,9 @@ const CHARTER_TYPES = [
 ];
 
 export function BookingForm() {
+  const searchParams = useSearchParams();
+  const [boats, setBoats] = useState<Boat[]>([]);
+  const [selectedBoatId, setSelectedBoatId] = useState('');
   const [blockedDates, setBlockedDates] = useState<Date[]>([]);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [charterType, setCharterType] = useState('fishing');
@@ -30,16 +42,72 @@ export function BookingForm() {
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    fetch('/api/calendar')
+    fetch('/api/boats')
+      .then((r) => r.json())
+      .then((data: Boat[]) => {
+        const activeBoats = Array.isArray(data) ? data : [];
+        setBoats(activeBoats);
+
+        const requestedSlug = searchParams.get('boat');
+        const requestedBoat = activeBoats.find(
+          (boat) => boat.slug === requestedSlug
+        );
+
+        setSelectedBoatId(
+          requestedBoat?.id ?? activeBoats[0]?.id ?? ''
+        );
+      })
+      .catch(() => {
+        toast.error('Unable to load available boats.');
+      });
+  }, [searchParams]);
+
+  const selectedBoat = boats.find(
+    (boat) => boat.id === selectedBoatId
+  );
+
+  const isCashFlow =
+    selectedBoat?.slug === 'cash-flow-26-angler';
+
+  useEffect(() => {
+    if (!selectedBoatId) {
+      setBlockedDates([]);
+      return;
+    }
+
+    fetch(`/api/calendar?boatId=${encodeURIComponent(selectedBoatId)}`)
       .then((r) => r.json())
       .then((dates: any) => {
-        setBlockedDates((dates ?? []).map((d: string) => new Date(d)));
+        setBlockedDates(
+          (dates ?? []).map((date: string) => new Date(date))
+        );
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => {
+        setBlockedDates([]);
+      });
 
-  const currentPackage = (CHARTER_PACKAGES as any)?.[charterType];
+    setSelectedDate(undefined);
+  }, [selectedBoatId]);
+
+  useEffect(() => {
+    if (isCashFlow) {
+      setCharterType('fishing');
+    }
+
+    const capacity = selectedBoat?.capacity ?? 1;
+    setGuestCount((count) => Math.min(count, capacity));
+  }, [isCashFlow, selectedBoat?.capacity]);
+
+  const currentPackage = isCashFlow
+    ? CASH_FLOW_PACKAGE
+    : (CHARTER_PACKAGES as any)?.[charterType];
+
+  const availableCharterTypes = isCashFlow
+    ? CHARTER_TYPES.filter((type) => type.key === 'fishing')
+    : CHARTER_TYPES;
+
   const options = currentPackage?.options ?? [];
+  const maximumGuests = selectedBoat?.capacity ?? 1;
 
   // Auto-select first duration when charter type changes
   useEffect(() => {
@@ -47,7 +115,7 @@ export function BookingForm() {
       setDuration(options[0]?.duration ?? '');
     }
     setUpgrade('');
-  }, [charterType]);
+  }, [charterType, isCashFlow]);
 
   const selectedOption = options?.find?.((o: any) => o?.duration === duration);
   const selectedUpgrade = (currentPackage?.upgrades ?? [])?.find?.((u: any) => u?.name === upgrade);
@@ -62,6 +130,7 @@ export function BookingForm() {
   const depositAmount = payInFull ? totalPrice : Math.round(totalPrice * 0.5 * 100) / 100;
 
   const handleSubmit = useCallback(async () => {
+    if (!selectedBoatId) { toast.error('Please select a boat'); return; }
     if (!selectedDate) { toast.error('Please select a date'); return; }
     if (!formData.name || !formData.email || !formData.phone) {
       toast.error('Please fill in all contact fields');
@@ -74,14 +143,14 @@ export function BookingForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          charterType: currentPackage?.name ?? charterType,
+          boatId: selectedBoatId,
+          charterType,
           charterDuration: duration,
           charterDate: selectedDate.toISOString(),
           guestName: formData.name,
           guestEmail: formData.email,
           guestPhone: formData.phone,
           guestCount,
-          totalPrice,
           upgrades: upgrade || null,
           notes: formData.notes || null,
         }),
@@ -92,7 +161,7 @@ export function BookingForm() {
           toast.error(err?.error || 'That date is no longer available. Please choose another day.');
           setSelectedDate(undefined);
           // Refresh blocked dates so the calendar updates immediately
-          fetch('/api/calendar').then((r) => r.json()).then((dates: any) => {
+          fetch(`/api/calendar?boatId=${encodeURIComponent(selectedBoatId)}`).then((r) => r.json()).then((dates: any) => {
             setBlockedDates((dates ?? []).map((d: string) => new Date(d)));
           }).catch(() => {});
           return;
@@ -106,7 +175,7 @@ export function BookingForm() {
     } finally {
       setSubmitting(false);
     }
-  }, [selectedDate, formData, charterType, duration, guestCount, totalPrice, upgrade, currentPackage]);
+  }, [selectedBoatId, selectedDate, formData, charterType, duration, guestCount, upgrade]);
 
   if (submitted) {
     return (
@@ -145,11 +214,37 @@ export function BookingForm() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left: Charter selection */}
         <div className="lg:col-span-2 space-y-6">
+          {/* Boat selection */}
+          <div>
+            <Label className="text-sm font-semibold uppercase tracking-wider text-primary mb-3 block">
+              Choose Your Boat
+            </Label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {boats.map((boat) => (
+                <button
+                  key={boat.id}
+                  type="button"
+                  onClick={() => setSelectedBoatId(boat.id)}
+                  className={`rounded-lg border p-4 text-left transition-all ${
+                    selectedBoatId === boat.id
+                      ? 'bg-primary/15 border-primary/50'
+                      : 'bg-card border-border/30 hover:border-primary/20'
+                  }`}
+                >
+                  <span className="block font-semibold">{boat.name}</span>
+                  <span className="block text-xs text-muted-foreground mt-1">
+                    Up to {boat.capacity ?? 1} guests
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Charter type */}
           <div>
             <Label className="text-sm font-semibold uppercase tracking-wider text-primary mb-3 block">Charter Type</Label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {CHARTER_TYPES?.map((ct: any) => (
+              {availableCharterTypes.map((ct: any) => (
                 <button
                   key={ct?.key}
                   onClick={() => setCharterType(ct?.key ?? 'fishing')}
@@ -225,7 +320,7 @@ export function BookingForm() {
             <div className="flex items-center gap-3">
               <Button variant="outline" size="sm" onClick={() => setGuestCount(Math.max(1, guestCount - 1))} className="border-border/50">–</Button>
               <span className="font-mono text-xl w-12 text-center">{guestCount}</span>
-              <Button variant="outline" size="sm" onClick={() => setGuestCount(Math.min(6, guestCount + 1))} className="border-border/50">+</Button>
+              <Button variant="outline" size="sm" onClick={() => setGuestCount(Math.min(maximumGuests, guestCount + 1))} className="border-border/50">+</Button>
               <span className="text-xs text-muted-foreground">Max 6 guests — larger groups by arrangement with the captain</span>
             </div>
           </div>
@@ -282,6 +377,10 @@ export function BookingForm() {
             <h3 className="font-display text-lg font-semibold mb-4">Booking Summary</h3>
 
             <div className="space-y-3 text-sm">
+              <div className="flex justify-between gap-3">
+                <span className="text-muted-foreground">Boat</span>
+                <span className="text-right">{selectedBoat?.name ?? 'Select a boat'}</span>
+              </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Charter</span>
                 <span>{currentPackage?.name ?? ''}</span>
