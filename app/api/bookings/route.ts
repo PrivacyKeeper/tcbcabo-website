@@ -295,7 +295,7 @@ export async function POST(request: Request) {
             notification_id:
               process.env.NOTIF_ID_BOOKING_CONFIRMATION,
             subject: requiresCaptainApproval
-              ? `ACTION REQUIRED ASAP — Large Group Request — ${boat.name} — ${guests} Guests`
+              ? `ACTION REQUIRED ASAP â€” Large Group Request â€” ${boat.name} â€” ${guests} Guests`
               : `New Booking: ${boat.name} - ${guestName} - ${requestedDate.toLocaleDateString()}`,
             body: htmlBody,
             is_html: true,
