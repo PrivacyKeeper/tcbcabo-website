@@ -92,10 +92,10 @@ export function SiteHeader() {
               </a>
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 text-foreground"
+                className="flex items-center gap-1 p-2 text-foreground"
                 aria-label="Toggle menu"
               >
-                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}<span className="text-sm font-medium">{isOpen ? "Close" : "Menu"}</span>
               </button>
             </div>
 
@@ -148,6 +148,35 @@ export function SiteHeader() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Mobile bottom navigation */}
+      <nav className="fixed bottom-0 left-0 right-0 z-50 grid grid-cols-4 border-t border-white/10 bg-[#0a1628]/95 backdrop-blur-xl lg:hidden">
+        {[
+          { href: '/', label: 'Home', icon: Home },
+          { href: '/charters', label: 'Charters', icon: Anchor },
+          { href: '/book', label: 'Book', icon: CalendarDays },
+          { href: '/contact', label: 'Contact', icon: Send },
+        ].map((link) => {
+          const Icon = link.icon;
+          const isActive = pathname === link.href;
+          return (
+            <Link
+              key={link.href}
+              href={link.href}
+              className={`flex min-h-[60px] flex-col items-center justify-center gap-1 text-xs ${
+                link.label === 'Book'
+                  ? 'bg-primary text-primary-foreground'
+                  : isActive
+                  ? 'text-primary'
+                  : 'text-white/75'
+              }`}
+            >
+              <Icon className="h-5 w-5" />
+              <span>{link.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
     </>
   );
 }
