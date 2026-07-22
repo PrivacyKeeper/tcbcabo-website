@@ -1,6 +1,6 @@
 import { SiteHeader } from '@/components/site-header';
 import { SiteFooter } from '@/components/site-footer';
-import { BookingForm } from './_components/booking-form';
+import { BookingExperience } from './_components/booking-experience';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export default function BookPage() {
     <>
       <SiteHeader />
       <main className="pt-20">
-        <BookingForm />
+        <BookingExperience />
       </main>
       <SiteFooter />
     </>
