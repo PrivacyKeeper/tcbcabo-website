@@ -212,3 +212,20 @@ model ContactSubmission {
   status    String   @default("new")
   createdAt DateTime @default(now())
 }
+model VillaBooking {
+  id           String   @id @default(cuid())
+  checkInDate  DateTime
+  checkOutDate DateTime
+  guestName    String
+  guestEmail   String
+  guestPhone   String
+  guestCount   Int      @default(1)
+  notes        String?
+  status       String   @default("pending")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([checkInDate])
+  @@index([checkOutDate])
+  @@index([status])
+}
