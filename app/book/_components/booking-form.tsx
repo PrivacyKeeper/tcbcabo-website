@@ -27,6 +27,14 @@ const CHARTER_TYPES = [
   { key: 'bachelor', label: 'Bachelor/Bachelorette' },
 ];
 
+// Parse a blocked-date string (e.g. "2026-11-07T00:00:00.000Z") into a LOCAL
+// date at midnight, using only the calendar day. This prevents the timezone
+// shift where a UTC-midnight date renders as the previous day in the browser.
+function parseBlockedDate(value: string): Date {
+  const [y, m, d] = value.slice(0, 10).split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
 export function BookingForm() {
   const searchParams = useSearchParams();
   const [boats, setBoats] = useState<Boat[]>([]);
@@ -79,7 +87,7 @@ export function BookingForm() {
       .then((r) => r.json())
       .then((dates: any) => {
         setBlockedDates(
-          (dates ?? []).map((date: string) => new Date(date))
+          (dates ?? []).map((date: string) => parseBlockedDate(date))
         );
       })
       .catch(() => {
@@ -146,7 +154,15 @@ export function BookingForm() {
           boatId: selectedBoatId,
           charterType,
           charterDuration: duration,
-          charterDate: selectedDate.toISOString(),
+          // Send the selected calendar day as UTC midnight so the server
+          // records the exact day the guest picked, regardless of timezone.
+          charterDate: new Date(
+            Date.UTC(
+              selectedDate.getFullYear(),
+              selectedDate.getMonth(),
+              selectedDate.getDate()
+            )
+          ).toISOString(),
           guestName: formData.name,
           guestEmail: formData.email,
           guestPhone: formData.phone,
@@ -162,7 +178,7 @@ export function BookingForm() {
           setSelectedDate(undefined);
           // Refresh blocked dates so the calendar updates immediately
           fetch(`/api/calendar?boatId=${encodeURIComponent(selectedBoatId)}`).then((r) => r.json()).then((dates: any) => {
-            setBlockedDates((dates ?? []).map((d: string) => new Date(d)));
+            setBlockedDates((dates ?? []).map((d: string) => parseBlockedDate(d)));
           }).catch(() => {});
           return;
         }
