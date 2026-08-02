@@ -8,7 +8,7 @@ import { X, Camera } from 'lucide-react';
 
 const CATEGORIES = [
   { key: 'all', label: 'All' },
-  { key: 'boat', label: 'The Boat' },
+  { key: 'boat', label: 'The Boats' },
   { key: 'fishing', label: 'Fishing' },
   { key: 'tournament', label: 'Tournaments' },
   { key: 'dining', label: 'Dining' },
