@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import Image from 'next/image';
@@ -13,6 +14,29 @@ const ICON_MAP: Record<string, any> = { Radar, Navigation, Ship, Bath, Wifi, Arm
 export function BoatContent() {
   const { ref: specRef, inView: specInView } = useInView({ triggerOnce: true, threshold: 0.1 });
   const { ref: amenRef, inView: amenInView } = useInView({ triggerOnce: true, threshold: 0.1 });
+
+  // Next.js App Router does not reliably scroll to a #hash when navigating
+  // from another page (or from the same page). This manually scrolls to the
+  // targeted section (e.g. #cash-flow) once the content has rendered, and also
+  // responds to later hash changes (clicking the nav link while already here).
+  useEffect(() => {
+    const scrollToHash = () => {
+      const hash = window.location.hash;
+      if (!hash) return;
+      const el = document.getElementById(hash.slice(1));
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    };
+
+    // Delay lets the page paint before we scroll.
+    const t = setTimeout(scrollToHash, 300);
+    window.addEventListener('hashchange', scrollToHash);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener('hashchange', scrollToHash);
+    };
+  }, []);
 
   const boatImages = (GALLERY_IMAGES ?? []).filter((i: any) => i?.category === 'boat');
 
@@ -160,7 +184,7 @@ export function BoatContent() {
       </div>
 
       {/* Cash Flow section */}
-      <div id="cash-flow" className="mt-24 pt-16 border-t border-border/30">
+      <div id="cash-flow" className="mt-24 pt-16 border-t border-border/30 scroll-mt-24">
         <div className="text-center mb-12">
           <p className="text-primary font-mono text-sm tracking-[0.15em] uppercase mb-2">The Center Console</p>
           <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
