@@ -151,12 +151,100 @@ export function BoatContent() {
       )}
 
       <div className="text-center">
-        <Link href="/book">
+        <Link href="/book?boat=tcb">
           <Button size="lg" className="min-w-[220px] text-base">
             <CalendarDays className="w-5 h-5 mr-2" />
             Book TCB
           </Button>
         </Link>
+      </div>
+
+      {/* Cash Flow section */}
+      <div id="cash-flow" className="mt-24 pt-16 border-t border-border/30">
+        <div className="text-center mb-12">
+          <p className="text-primary font-mono text-sm tracking-[0.15em] uppercase mb-2">The Center Console</p>
+          <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight mb-4">
+            Cash Flow — <span className="text-gold-gradient">26&apos; Angler</span>
+          </h2>
+          <p className="text-muted-foreground max-w-xl mx-auto">
+            Nimble, fast, and purpose-built for serious fishing. Cash Flow is a 26-foot Angler center console designed for an intimate fishing experience off La Paz, B.C.S.
+          </p>
+        </div>
+
+        {/* Cash Flow Specifications */}
+        <section className="mb-12">
+          <h3 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
+            <Anchor className="w-5 h-5 text-primary" />
+            Vessel Specifications
+          </h3>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[
+              { label: 'Length', value: '26 Feet' },
+              { label: 'Type', value: 'Center Console' },
+              { label: 'Max Guests', value: '4 Anglers' },
+              { label: 'Home Port', value: 'La Paz, B.C.S.' },
+            ].map((spec: any) => (
+              <div key={spec?.label} className="bg-card border border-border/30 rounded-lg p-4">
+                <p className="text-xs text-muted-foreground uppercase">{spec?.label}</p>
+                <p className="font-display font-semibold text-lg">{spec?.value}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* What's Included */}
+        <section className="mb-12">
+          <h3 className="font-display text-2xl font-bold mb-6 flex items-center gap-2">
+            <Shield className="w-5 h-5 text-primary" />
+            Included on Every Charter
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              'Professional captain and crew',
+              'Top-shelf rods, reels & terminal tackle',
+              'Live bait & lures',
+              'Fishing licenses for all anglers',
+              'Ice-cold drinks, snacks & lunch',
+              'Catch cleaning & filleting',
+            ].map((item: string) => (
+              <div key={item} className="bg-card border border-border/30 rounded-lg p-4 flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-primary flex-shrink-0" />
+                <p className="text-sm">{item}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Pickup Location */}
+        <section className="mb-12">
+          <div className="bg-card border border-border/30 rounded-lg p-6">
+            <h3 className="font-display text-xl font-bold mb-3 flex items-center gap-2">
+              <Navigation className="w-5 h-5 text-primary" />
+              Pickup Location
+            </h3>
+            <p className="text-muted-foreground mb-4">
+              Cash Flow departs from La Paz, Baja California Sur — approximately 2 hours north of Cabo San Lucas. La Paz offers exceptional inshore and offshore fishing in the protected Sea of Cortez.
+            </p>
+            <a
+              href="https://maps.app.goo.gl/9CjYJLLHr81ZFMWU8"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-primary hover:underline text-sm"
+            >
+              <Navigation className="w-4 h-4" />
+              View pickup location on Google Maps
+            </a>
+          </div>
+        </section>
+
+        <div className="text-center">
+          <Link href="/book?boat=cash-flow">
+            <Button size="lg" className="min-w-[220px] text-base">
+              <CalendarDays className="w-5 h-5 mr-2" />
+              Book Cash Flow
+            </Button>
+          </Link>
+        </div>
       </div>
     </div>
   );

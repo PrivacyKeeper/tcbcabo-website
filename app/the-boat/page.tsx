@@ -4,8 +4,8 @@ import { BoatContent } from './_components/boat-content';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'The Boats | Striped World Charters - 58\' Viking Sportfisher',
-  description: 'Explore TCB, the 58\' Viking sportfisher in Cabo San Lucas. Tournament-proven with top-of-the-line equipment, Starlink, flybridge & luxury amenities.',
+  title: 'The Boats | Striped World Charters - TCB 58\' Viking & Cash Flow 26\' Angler',
+  description: 'Meet our fleet: TCB, a tournament-proven 58\' Viking sportfisher in Cabo, and Cash Flow, a nimble 26\' Angler center console based in La Paz for intimate fishing adventures.',
 };
 
 export default function TheBoatPage() {
