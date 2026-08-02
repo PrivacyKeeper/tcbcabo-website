@@ -14,7 +14,7 @@ const NAV_LINKS = [
   { href: '/gallery', label: 'Gallery', icon: Camera },
   { href: '/the-boat', label: 'The Boat', icon: Ship },
   { href: '/book', label: 'Book Now', icon: CalendarDays },
-  { href: '/villa', label: 'TCB Villa', icon: Home },
+  { href: '/villa', label: 'Villa Amore', icon: Home },
   { href: '/contact', label: 'Contact', icon: Send },
 ];
 

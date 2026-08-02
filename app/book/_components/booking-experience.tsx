@@ -39,7 +39,7 @@ export function BookingExperience() {
             }`}
           >
             <Building2 className="mx-auto mb-2 h-5 w-5" />
-            <span className="font-semibold">TCB Villa</span>
+            <span className="font-semibold">Villa Amore</span>
           </button>
         </div>
       </div>

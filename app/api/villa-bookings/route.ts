@@ -79,7 +79,7 @@ export async function POST(request: Request) {
 
       const htmlBody = `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0a1628;color:#f0e6d2;padding:30px;border-radius:8px">
-          <h2 style="color:#c9a96e;border-bottom:2px solid #c9a96e;padding-bottom:10px">New TCB Villa Booking Request</h2>
+          <h2 style="color:#c9a96e;border-bottom:2px solid #c9a96e;padding-bottom:10px">New Villa Amore Booking Request</h2>
           <div style="background:#111d33;padding:20px;border-radius:8px;margin:20px 0">
             <p><strong style="color:#c9a96e">Check-in:</strong> ${escapeHtml(checkIn.toLocaleDateString('en-US'))}</p>
             <p><strong style="color:#c9a96e">Check-out:</strong> ${escapeHtml(checkOut.toLocaleDateString('en-US'))}</p>
@@ -100,7 +100,7 @@ export async function POST(request: Request) {
           deployment_token: process.env.ABACUSAI_API_KEY,
           app_id: process.env.WEB_APP_ID,
           notification_id: process.env.NOTIF_ID_BOOKING_CONFIRMATION,
-          subject: `New TCB Villa Request - ${guestName}`,
+          subject: `New Villa Amore Request - ${guestName}`,
           body: htmlBody,
           is_html: true,
           recipient_email: recipient,
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
           sender_email: appUrl
             ? `noreply@${new URL(appUrl).hostname}`
             : 'noreply@stripedworldcharters.com',
-          sender_alias: 'TCB Villa',
+          sender_alias: 'Villa Amore',
         }),
       });
     } catch (emailError: unknown) {

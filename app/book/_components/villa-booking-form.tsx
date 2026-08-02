@@ -109,7 +109,7 @@ export function VillaBookingForm() {
           Plan Your Stay
         </p>
         <h1 className="mb-3 font-display text-3xl font-bold sm:text-4xl">
-          Book <span className="text-gold-gradient">TCB Villa</span>
+          Book <span className="text-gold-gradient">Villa Amore</span>
         </h1>
         <p className="mx-auto max-w-md text-sm text-muted-foreground">
           Choose your dates and submit a request. We&apos;ll contact you to
