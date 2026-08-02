@@ -168,6 +168,29 @@ export function BookingForm() {
         }
         throw new Error('Failed');
       }
+
+      // Booking created — now start Stripe checkout for the deposit/full payment.
+      const booking = await res.json().catch(() => null);
+      if (booking?.id) {
+        try {
+          const checkoutRes = await fetch('/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ bookingId: booking.id }),
+          });
+          if (checkoutRes.ok) {
+            const { url } = await checkoutRes.json();
+            if (url) {
+              window.location.href = url;
+              return;
+            }
+          }
+        } catch {
+          // fall through to the request-received screen below
+        }
+      }
+
+      // Payment not enabled yet (or checkout unavailable) — show request screen.
       setSubmitted(true);
       toast.success('Booking request submitted!');
     } catch {
