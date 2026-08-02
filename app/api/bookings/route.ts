@@ -299,7 +299,7 @@ export async function POST(request: Request) {
               : `New Booking: ${boat.name} - ${guestName} - ${requestedDate.toLocaleDateString()}`,
             body: htmlBody,
             is_html: true,
-            recipient_email: 'info@stripedworldcharters.com',
+            recipient_email: boat.slug === 'cash-flow-26-angler' ? 'stripedworldcharters@gmail.com' : 'info@stripedworldcharters.com',
             reply_to: guestEmail,
             sender_email: appUrl
               ? `noreply@${new URL(appUrl).hostname}`
