@@ -61,6 +61,26 @@ export function VillaBookingForm() {
         throw new Error(result.error || 'Unable to submit request.');
       }
 
+      // Request created — now start Stripe checkout for the deposit/full payment.
+      if (result?.id) {
+        try {
+          const checkoutRes = await fetch('/api/checkout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ villaBookingId: result.id }),
+          });
+          if (checkoutRes.ok) {
+            const { url } = await checkoutRes.json();
+            if (url) {
+              window.location.href = url;
+              return;
+            }
+          }
+        } catch {
+          // fall through to the request-received screen below
+        }
+      }
+
       setSubmitted(true);
       toast.success('Villa booking request submitted!');
     } catch (error: unknown) {

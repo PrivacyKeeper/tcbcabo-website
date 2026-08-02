@@ -1,0 +1,34 @@
+import Stripe from 'stripe';
+
+// Two separate Stripe accounts:
+//   - 'tcb'       → TCB (58' Viking) AND Villa Amore (they share one account)
+//   - 'cash-flow' → Cash Flow (26' Angler), separate Mexican account (added later)
+export type StripeAccount = 'tcb' | 'cash-flow';
+
+const SECRET_KEYS: Record<StripeAccount, string | undefined> = {
+  tcb: process.env.STRIPE_TCB_SECRET_KEY,
+  'cash-flow': process.env.STRIPE_CASH_FLOW_SECRET_KEY,
+};
+
+// Returns a Stripe client for the given account, or null if that account's
+// secret key is not configured yet (lets the site run before keys are added).
+export function getStripe(account: StripeAccount): Stripe | null {
+  const key = SECRET_KEYS[account];
+  return key ? new Stripe(key) : null;
+}
+
+// Maps a boat slug to the correct Stripe account.
+// Cash Flow has its own account; everything else (TCB, Villa) uses 'tcb'.
+export function accountForBoatSlug(
+  slug: string | null | undefined
+): StripeAccount {
+  return slug === 'cash-flow-26-angler' ? 'cash-flow' : 'tcb';
+}
+
+// Flat card-processing fee added on top of the charter/villa price.
+export const CARD_FEE_RATE = 0.03; // 3%
+
+// Adds the 3% card fee and returns an integer cent amount for Stripe.
+export function toStripeAmountWithFee(amountUsd: number): number {
+  return Math.round(amountUsd * (1 + CARD_FEE_RATE) * 100);
+}
