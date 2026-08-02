@@ -61,7 +61,7 @@ You can control cookie preferences through your browser settings. Disabling cook
 • **Deletion:** Request deletion of your personal data, subject to legal retention requirements.
 • **Opt-Out:** Unsubscribe from marketing communications at any time.
 
-To exercise any of these rights, contact us at stripedworldcharters@gmail.com.`,
+To exercise any of these rights, contact us at info@stripedworldcharters.com.`,
   },
   {
     title: '8. Third-Party Links',
@@ -113,8 +113,8 @@ export function PrivacyContent() {
         <div className="mt-10 p-5 bg-muted/30 rounded-lg border border-border/20 text-center">
           <p className="text-muted-foreground text-sm">
             Privacy questions? Contact us at{' '}
-            <a href="mailto:stripedworldcharters@gmail.com" className="text-primary hover:underline">
-              stripedworldcharters@gmail.com
+            <a href="mailto:info@stripedworldcharters.com" className="text-primary hover:underline">
+              info@stripedworldcharters.com
             </a>
           </p>
         </div>

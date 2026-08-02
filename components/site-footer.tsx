@@ -4,7 +4,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 
 const PHONE_NUMBER = "+526241225441";
 const PHONE_DISPLAY = "+52 624 122 5441";
-const EMAIL = "stripedworldcharters@gmail.com";
+const EMAIL = "info@stripedworldcharters.com";
 
 export function SiteFooter() {
   return (

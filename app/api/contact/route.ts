@@ -43,7 +43,7 @@ export async function POST(request: Request) {
           subject: `Striped World Charters Contact: ${subject} - from ${name}`,
           body: htmlBody,
           is_html: true,
-          recipient_email: 'mf90277@gmail.com',
+          recipient_email: 'info@stripedworldcharters.com',
           reply_to: email,
           sender_email: appUrl ? `noreply@${new URL(appUrl).hostname}` : 'noreply@stripedworldcharters.com',
           sender_alias: 'Striped World Charters',

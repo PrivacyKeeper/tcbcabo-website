@@ -112,13 +112,13 @@ export function ContactForm() {
                   <p className="font-mono text-sm">+52 624 122 5441</p>
                 </div>
               </a>
-              <a href="mailto:stripedworldcharters@gmail.com" className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors">
+              <a href="mailto:info@stripedworldcharters.com" className="flex items-center gap-3 text-muted-foreground hover:text-primary transition-colors">
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                   <Mail className="w-5 h-5 text-primary" />
                 </div>
                 <div>
                   <p className="text-xs text-muted-foreground">Email</p>
-                  <p className="text-sm">stripedworldcharters@gmail.com</p>
+                  <p className="text-sm">info@stripedworldcharters.com</p>
                 </div>
               </a>
               <div className="flex items-center gap-3">

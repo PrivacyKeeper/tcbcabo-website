@@ -116,8 +116,8 @@ export function DisclaimersContent() {
         <div className="mt-10 p-5 bg-muted/30 rounded-lg border border-border/20 text-center">
           <p className="text-muted-foreground text-sm">
             Legal questions? Contact us at{' '}
-            <a href="mailto:stripedworldcharters@gmail.com" className="text-primary hover:underline">
-              stripedworldcharters@gmail.com
+            <a href="mailto:info@stripedworldcharters.com" className="text-primary hover:underline">
+              info@stripedworldcharters.com
             </a>{' '}
             or call <a href="tel:+526241225441" className="text-primary hover:underline">+52 624 122 5441</a>.
           </p>
