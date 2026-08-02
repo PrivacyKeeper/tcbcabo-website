@@ -107,6 +107,12 @@ export function SiteHeader() {
                 </Button>
               </Link>
 
+              <Link href="/villa">
+                <Button variant="ghost" size="sm" className={navItemClasses(pathname === '/villa')}>
+                  <Home className="w-4 h-4 mr-1.5" /> Villa Amore
+                </Button>
+              </Link>
+
               {/* The Boats Dropdown */}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -219,6 +225,7 @@ export function SiteHeader() {
               {/* Plain Links */}
               <Link href="/species" className="flex items-center gap-3 px-4 py-3 text-lg border-b border-white/5"><Fish className="w-5 h-5 text-primary" /> Species</Link>
               <Link href="/gallery" className="flex items-center gap-3 px-4 py-3 text-lg border-b border-white/5"><Camera className="w-5 h-5 text-primary" /> Gallery</Link>
+              <Link href="/villa" className="flex items-center gap-3 px-4 py-3 text-lg border-b border-white/5"><Home className="w-5 h-5 text-primary" /> Villa Amore</Link>
 
               {/* The Boats Accordion */}
               <div>
