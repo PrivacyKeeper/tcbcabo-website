@@ -1,6 +1,5 @@
 import { NextAuthOptions } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import bcrypt from 'bcryptjs';
 import { prisma } from '@/lib/db';
 
 export const authOptions: NextAuthOptions = {
@@ -8,35 +7,46 @@ export const authOptions: NextAuthOptions = {
     CredentialsProvider({
       name: 'credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
+        code: { label: 'Access Code', type: 'password' },
       },
 
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.password) {
+        const submitted = (credentials?.code ?? '').trim();
+
+        if (!submitted) {
           return null;
         }
 
-        const email = credentials.email.trim().toLowerCase();
+        // Shared access code. Set CAPTAIN_ACCESS_CODE in Vercel to change it
+        // anytime without a code push. Falls back to a default for first use.
+        const validCode =
+          process.env.CAPTAIN_ACCESS_CODE?.trim() || 'CaboTCB2026';
+
+        if (submitted !== validCode) {
+          return null;
+        }
 
         try {
-          const user = await prisma.user.findUnique({
-            where: { email },
+          // Map the shared code to the captain account so anything posted
+          // (reports, reviews, photos) still has a valid author.
+          const captainEmail =
+            process.env.CAPTAIN_EMAIL?.trim().toLowerCase() ||
+            'captain@stripedworldcharters.com';
+
+          let user = await prisma.user.findUnique({
+            where: { email: captainEmail },
           });
+
+          // If the captain account doesn't exist yet, fall back to the first
+          // admin so login never hard-fails on a fresh database.
+          if (!user) {
+            user = await prisma.user.findFirst({
+              where: { role: 'admin' },
+            });
+          }
 
           if (!user) {
             return null;
-          }
-
-          if (process.env.NODE_ENV !== 'development') {
-            const isValid = await bcrypt.compare(
-              credentials.password,
-              user.password
-            );
-
-            if (!isValid) {
-              return null;
-            }
           }
 
           return {

@@ -10,19 +10,18 @@ import { Waves, Loader2, Lock } from 'lucide-react';
 import { toast } from 'sonner';
 
 export function CaptainLoginForm() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e?.preventDefault?.();
-    if (!email || !password) { toast.error('Enter credentials'); return; }
+    if (!code) { toast.error('Enter your access code'); return; }
     setLoading(true);
     try {
-      const res = await signIn('credentials', { email, password, redirect: false });
+      const res = await signIn('credentials', { code, redirect: false });
       if (res?.error) {
-        toast.error('Invalid credentials');
+        toast.error('Invalid access code');
       } else {
         router.replace('/captain/dashboard');
       }
@@ -31,7 +30,7 @@ export function CaptainLoginForm() {
     } finally {
       setLoading(false);
     }
-  }, [email, password, router]);
+  }, [code, router]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background px-4">
@@ -44,17 +43,13 @@ export function CaptainLoginForm() {
               <span className="text-muted-foreground font-normal ml-1.5 text-base">Captain</span>
             </span>
           </div>
-          <p className="text-muted-foreground text-sm">Sign in to manage reports &amp; bookings</p>
+          <p className="text-muted-foreground text-sm">Enter your access code to manage reports, reviews &amp; bookings</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-card border border-border/30 rounded-lg p-6 space-y-4">
           <div>
-            <Label htmlFor="email" className="text-xs text-muted-foreground mb-1 block">Email</Label>
-            <Input id="email" type="email" value={email} onChange={(e: any) => setEmail(e?.target?.value ?? '')} placeholder="captain@stripedworldcharters.com" />
-          </div>
-          <div>
-            <Label htmlFor="password" className="text-xs text-muted-foreground mb-1 block">Password</Label>
-            <Input id="password" type="password" value={password} onChange={(e: any) => setPassword(e?.target?.value ?? '')} placeholder="••••••••" />
+            <Label htmlFor="code" className="text-xs text-muted-foreground mb-1 block">Access Code</Label>
+            <Input id="code" type="password" autoComplete="off" value={code} onChange={(e: any) => setCode(e?.target?.value ?? '')} placeholder="Enter shared access code" />
           </div>
           <Button type="submit" className="w-full" disabled={loading}>
             {loading ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Signing in...</> : <><Lock className="w-4 h-4 mr-2" /> Sign In</>}
