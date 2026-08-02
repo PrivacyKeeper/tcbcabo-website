@@ -64,6 +64,13 @@ export function SiteFooter() {
               >
                 Photo Gallery
               </Link>
+
+              <Link
+                href="/faq"
+                className="text-sm text-muted-foreground transition-colors hover:text-primary"
+              >
+                FAQ &amp; Know Before You Go
+              </Link>
             </div>
           </div>
 

@@ -1,12 +1,18 @@
 'use client';
 
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Building2, Ship } from 'lucide-react';
 import { BookingForm } from './booking-form';
 import { VillaBookingForm } from './villa-booking-form';
 
 export function BookingExperience() {
-  const [bookingType, setBookingType] = useState<'charter' | 'villa'>('charter');
+  const searchParams = useSearchParams();
+  // Preselect the villa when arriving via /book?type=villa (the /villa route
+  // redirects here). Everything else defaults to the boat charter flow.
+  const initialType =
+    searchParams.get('type') === 'villa' ? 'villa' : 'charter';
+  const [bookingType, setBookingType] = useState<'charter' | 'villa'>(initialType);
 
   return (
     <>
