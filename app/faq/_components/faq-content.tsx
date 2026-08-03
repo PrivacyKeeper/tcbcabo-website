@@ -6,26 +6,33 @@ import { ArrowLeft, LifeBuoy, FileCheck2, Waves, AlertTriangle } from 'lucide-re
 
 const sections = [
   {
-    title: 'Do I need a fishing license? (TCB — 58\' Viking)',
+    title: 'Do I need a fishing license?',
     content: `Yes. Every person aboard who fishes is legally required to have a valid Mexican fishing license — it's Mexican law, not our policy, and it is strictly enforced.
 
-For TCB charters, fishing licenses are purchased separately and are not included in the charter price. They are inexpensive and easy to arrange — we'll help you get squared away before departure. Just let us know your total number of anglers when you book so everyone is covered.
+Whether the license is included depends on which boat you're fishing:
+
+• Cash Flow (26' Angler): Fishing licenses for all anglers are included in the charter price.
+• TCB (58' Viking): Fishing licenses are purchased separately and are not included in the charter price. They are inexpensive and easy to arrange — we'll help you get squared away before departure. Just let us know your total number of anglers when you book.
 
 If you're aboard but not fishing, a license is not required — but if you pick up a rod at any point, you'll need one.`,
   },
   {
     title: 'Will I get seasick? What do you recommend?',
-    content: `TCB is a 58' Viking equipped with stabilizers, which makes for a notably smoother, more comfortable ride than smaller boats — most guests do great.
+    content: `Most of our guests do great. TCB (our 58' Viking) is equipped with stabilizers for a notably smoother ride, and Cash Flow is a nimble center console that handles the Sea of Cortez beautifully.
 
 From experience — not medical advice (see below): guests who are prone to motion sickness tend to do best when they start an over-the-counter remedy two nights before and again the night before their charter, rather than waiting until the morning of. Staying hydrated, getting a good night's sleep, going easy on alcohol the night before, and keeping your eyes on the horizon all help, too.
 
 We want every guest to have a great day on the water — if you have any concerns, reach out and we're happy to talk through what has worked well for past guests.`,
   },
   {
-    title: 'What\'s included on a TCB charter?',
-    content: `Your TCB charter includes the vessel, professional captain and crew, fuel, top-of-the-line rods, reels and terminal tackle, bait, and the crew's local knowledge to put you on the fish.
+    title: 'What\'s included on my charter?',
+    content: `What's included varies by boat and package:
 
-Not included: Mexican fishing licenses (purchased separately — see above), gratuity for the crew, and any items noted as add-ons at the time of booking.
+Cash Flow (26' Angler) includes: professional captain and crew, top-shelf rods, reels and terminal tackle, live bait and lures, fishing licenses for all anglers, ice-cold drinks, snacks, lunch, and catch cleaning.
+
+TCB (58' Viking) includes: the vessel, professional captain and crew, fuel, top-of-the-line rods, reels and terminal tackle, bait, and the crew's local knowledge. Fishing licenses are purchased separately, and food/drink inclusions vary by package.
+
+Not included on either boat: gratuity for the crew (always appreciated but never required).
 
 Please confirm the exact inclusions for your specific package on the Charters page or with our team when you book.`,
   },
