@@ -10,6 +10,13 @@ const SECRET_KEYS: Record<StripeAccount, string | undefined> = {
   'cash-flow': process.env.STRIPE_CASH_FLOW_SECRET_KEY,
 };
 
+// Webhook signing secrets (one per Stripe account). Each account posts events
+// to the same /api/webhooks/stripe endpoint but signs with its own secret.
+export const WEBHOOK_SECRETS: Record<StripeAccount, string | undefined> = {
+  tcb: process.env.STRIPE_TCB_WEBHOOK_SECRET,
+  'cash-flow': process.env.STRIPE_CASH_FLOW_WEBHOOK_SECRET,
+};
+
 // Returns a Stripe client for the given account, or null if that account's
 // secret key is not configured yet (lets the site run before keys are added).
 export function getStripe(account: StripeAccount): Stripe | null {
