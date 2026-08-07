@@ -32,10 +32,12 @@ export function accountForBoatSlug(
   return slug === 'cash-flow-26-angler' ? 'cash-flow' : 'tcb';
 }
 
-// Flat card-processing fee added on top of the charter/villa price.
-export const CARD_FEE_RATE = 0.03; // 3%
-
-// Adds the 3% card fee and returns an integer cent amount for Stripe.
-export function toStripeAmountWithFee(amountUsd: number): number {
-  return Math.round(amountUsd * (1 + CARD_FEE_RATE) * 100);
-}
+// Online (card) pricing lives in the client-safe module lib/pricing.ts.
+// Re-exported here so existing server imports from '@/lib/stripe' keep working.
+export {
+  STRIPE_PERCENT,
+  STRIPE_FIXED,
+  onlineCardPrice,
+  toStripeCents,
+  formatUsd,
+} from './pricing';

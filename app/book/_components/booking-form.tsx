@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { CalendarDays, Check, DollarSign, Clock, Users, AlertCircle, Loader2 } from 'lucide-react';
 import { CHARTER_PACKAGES, CASH_FLOW_PACKAGE } from '@/lib/charter-data';
+import { onlineCardPrice, formatUsd } from '@/lib/pricing';
 
 type Boat = {
   id: string;
@@ -130,12 +131,11 @@ export function BookingForm() {
   const basePrice = selectedOption?.price ?? 0;
   const additionalGuests = 0;
   const upgradePrice = selectedUpgrade?.price ?? 0;
+  // totalPrice is the CASH price (paid at the boat). The online card price is
+  // that grossed up to cover Stripe's fee — full payment online, no deposit.
   const totalPrice = basePrice + additionalGuests + upgradePrice;
-  const daysUntilCharter = selectedDate
-    ? Math.ceil((selectedDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
-    : null;
-  const payInFull = daysUntilCharter !== null && daysUntilCharter < 30;
-  const depositAmount = payInFull ? totalPrice : Math.round(totalPrice * 0.5 * 100) / 100;
+  const cashPrice = totalPrice;
+  const onlinePrice = onlineCardPrice(cashPrice);
 
   const handleSubmit = useCallback(async () => {
     if (!selectedBoatId) { toast.error('Please select a boat'); return; }
@@ -225,10 +225,10 @@ export function BookingForm() {
           </div>
           <h2 className="font-display text-2xl sm:text-3xl font-bold mb-4">Booking Request Received!</h2>
           <p className="text-muted-foreground mb-2">
-            We&apos;ll contact you shortly with payment instructions for the <strong className="text-primary">${depositAmount.toLocaleString()}</strong> {payInFull ? 'full payment' : 'deposit'}.
+            We&apos;ll contact you shortly to arrange payment and confirm your date.
           </p>
           <p className="text-muted-foreground text-sm mb-8">
-            Your date is <strong>not confirmed</strong> until payment is received.{!payInFull && (<> Balance of <strong className="text-primary">${(totalPrice - depositAmount).toLocaleString()}</strong> is due 30 days before your charter.</>)}
+            Your date is <strong>not confirmed</strong> until payment is received. You can pay the full amount online by card, or pay the discounted cash price at the boat.
           </p>
           <Button onClick={() => { setSubmitted(false); setSelectedDate(undefined); setFormData({ name: '', email: '', phone: '', notes: '' }); }}>
             Book Another Charter
@@ -246,7 +246,7 @@ export function BookingForm() {
           Book a <span className="text-gold-gradient">Charter</span>
         </h1>
         <p className="text-muted-foreground max-w-md mx-auto text-sm">
-          Select your charter type, choose an available date, and we&apos;ll send deposit instructions to confirm.
+          Select your charter type and an available date. Pay in full online by card, or pay the discounted cash price at the boat.
         </p>
       </div>
 
@@ -466,21 +466,21 @@ export function BookingForm() {
                 )}
               </div>
 
-              <div className="border-t border-border/50 pt-3">
-                <div className="flex justify-between text-lg font-semibold">
-                  <span>Total</span>
-                  <span className="text-gold-gradient">${totalPrice.toLocaleString()}</span>
+              <div className="border-t border-border/50 pt-3 space-y-3">
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
+                  <div className="flex justify-between font-semibold text-lg">
+                    <span className="flex items-center gap-1 text-primary">
+                      <DollarSign className="w-4 h-4" /> Online (card)
+                    </span>
+                    <span className="text-gold-gradient">{formatUsd(onlinePrice)}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">Paid in full now by credit card. Includes card processing.</p>
                 </div>
-              </div>
 
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
-                <div className="flex justify-between font-semibold">
-                  <span className="flex items-center gap-1 text-primary">
-                    <DollarSign className="w-4 h-4" /> {payInFull ? 'Due now (paid in full)' : 'Deposit (50%)'}
-                  </span>
-                  <span className="text-primary">${depositAmount.toLocaleString()}</span>
+                <div className="flex justify-between items-center px-1">
+                  <span className="text-muted-foreground">Cash price at the boat</span>
+                  <span className="font-semibold">${cashPrice.toLocaleString()}</span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">{payInFull ? 'Charter is within 30 days — full payment due at booking' : `Balance of $${(totalPrice - depositAmount).toLocaleString()} due 30 days before charter`}</p>
               </div>
             </div>
 
@@ -499,7 +499,7 @@ export function BookingForm() {
 
             <div className="flex items-start gap-2 mt-4 text-xs text-muted-foreground">
               <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-              <span>Your date is not confirmed until the deposit is received. We&apos;ll contact you with payment instructions.</span>
+              <span>Pay in full online by card, or pay the discounted cash price at the boat. Your date is confirmed once payment is received.</span>
             </div>
           </div>
         </div>

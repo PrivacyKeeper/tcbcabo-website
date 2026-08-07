@@ -5,6 +5,7 @@ import { useInView } from 'react-intersection-observer';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { CHARTER_PACKAGES, CASH_FLOW_PACKAGE } from '@/lib/charter-data';
+import { onlineCardPrice, formatUsd } from '@/lib/pricing';
 import { CalendarDays, Check, Clock, Users, DollarSign, Sparkles, Fish, Eye, Sunset, PartyPopper, Utensils, Info } from 'lucide-react';
 
 const SECTION_ICONS: Record<string, any> = {
@@ -53,12 +54,18 @@ function CharterSection({ sectionKey, data }: { sectionKey: string; data: any })
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           {(data?.options ?? []).map((opt: any, i: number) => (
             <div key={i} className="bg-card border border-border/30 rounded-lg p-5 hover:border-primary/30 transition-colors">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <Clock className="w-4 h-4 text-primary" />
-                  <span className="font-semibold">{opt?.duration}</span>
+              <div className="flex items-center gap-2 mb-3">
+                <Clock className="w-4 h-4 text-primary" />
+                <span className="font-semibold">{opt?.duration}</span>
+              </div>
+              <div className="mb-3">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-display text-2xl font-bold text-gold-gradient">{formatUsd(onlineCardPrice(opt?.price ?? 0))}</span>
+                  <span className="text-xs text-muted-foreground">online (card)</span>
                 </div>
-                <span className="font-display text-2xl font-bold text-gold-gradient">${(opt?.price ?? 0).toLocaleString()}</span>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  or {formatUsd(opt?.price ?? 0)} cash at the boat
+                </p>
               </div>
               <p className="text-muted-foreground text-sm mb-2">{opt?.details}</p>
               {opt?.startTime && (

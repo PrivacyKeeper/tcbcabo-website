@@ -61,7 +61,7 @@ export function VillaBookingForm() {
         throw new Error(result.error || 'Unable to submit request.');
       }
 
-      // Request created — now start Stripe checkout for the deposit/full payment.
+      // Request created — now start Stripe checkout for full payment.
       if (result?.id) {
         try {
           const checkoutRes = await fetch('/api/checkout', {

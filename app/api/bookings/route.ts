@@ -215,15 +215,10 @@ export async function POST(request: Request) {
       );
     }
 
-    const daysUntil =
-      (requestedDate.getTime() - Date.now()) /
-      (1000 * 60 * 60 * 24);
-
-    const payInFull = daysUntil < 30;
-
-    const depositAmount = payInFull
-      ? totalPrice
-      : Math.round(totalPrice * 0.5 * 100) / 100;
+    // Full payment online (no deposit). depositAmount mirrors totalPrice so the
+    // rest of the flow (checkout / emails) treats it as paid in full.
+    const payInFull = true;
+    const depositAmount = totalPrice;
 
     const charterLabels: Record<string, string> = {
       fishing: 'Fishing Charters',

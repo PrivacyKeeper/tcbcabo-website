@@ -5,16 +5,20 @@ import { prisma } from '@/lib/db';
 import {
   getStripe,
   accountForBoatSlug,
-  toStripeAmountWithFee,
-  CARD_FEE_RATE,
+  toStripeCents,
+  onlineCardPrice,
 } from '@/lib/stripe';
 
-const VILLA_NIGHTLY_RATE = 3000; // Villa Amore: $3,000 per night
+const VILLA_NIGHTLY_RATE = 3000; // Villa Amore: $3,000/night (cash price)
 const MS_PER_DAY = 1000 * 60 * 60 * 24;
 
 // Creates a Stripe Checkout Session for either a boat booking or a villa booking.
 // Body: { bookingId } for boats, or { villaBookingId } for Villa Amore.
-// Charges the 50% deposit (or full payment if within 30 days) plus a flat 3% card fee.
+//
+// Payment model (compliant cash-discount, NOT a surcharge): the guest pays the
+// full ONLINE card price now. That price already includes card-processing cost
+// (grossed up so we net the listed cash price). There is no deposit and no
+// separate fee line item. Paying cash at the boat is the discounted price.
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -49,28 +53,23 @@ export async function POST(request: Request) {
             MS_PER_DAY
         )
       );
-      const total = nights * VILLA_NIGHTLY_RATE;
+      const cashTotal = nights * VILLA_NIGHTLY_RATE; // discounted cash price
 
-      const daysUntil =
-        (new Date(villa.checkInDate).getTime() - Date.now()) / MS_PER_DAY;
-      const payInFull = daysUntil < 30;
-      amountDueNow = payInFull ? total : Math.round(total * 0.5 * 100) / 100;
-      const balanceDue = Math.round((total - amountDueNow) * 100) / 100;
+      // Full online card price (nets the cash price after Stripe fees).
+      amountDueNow = cashTotal;
+      const onlineTotal = onlineCardPrice(cashTotal);
 
       account = 'tcb'; // Villa shares the TCB account
       customerEmail = villa.guestEmail;
-      productName = `Villa Amore — ${payInFull ? 'Full Payment' : 'Deposit (50%)'}`;
-      description = payInFull
-        ? `Villa Amore — ${nights} night${nights > 1 ? 's' : ''} at $${VILLA_NIGHTLY_RATE.toLocaleString()}/night. Paid in full.`
-        : `Villa Amore — ${nights} night${nights > 1 ? 's' : ''} at $${VILLA_NIGHTLY_RATE.toLocaleString()}/night. 50% deposit. Balance of $${balanceDue.toLocaleString()} due no later than 30 days before check-in.`;
+      productName = `Villa Amore — ${nights} night${nights > 1 ? 's' : ''}`;
+      description = `Villa Amore — ${nights} night${nights > 1 ? 's' : ''} at $${VILLA_NIGHTLY_RATE.toLocaleString()}/night. Online card price $${onlineTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}. Cash price at check-in: $${cashTotal.toLocaleString()}.`;
       metadata = {
         villaBookingId: villa.id,
         guestName: villa.guestName,
         nights: String(nights),
-        total: String(total),
-        baseAmount: String(amountDueNow),
-        cardFee: String(Math.round(amountDueNow * CARD_FEE_RATE * 100) / 100),
-        paymentType: payInFull ? 'full' : 'deposit',
+        cashPrice: String(cashTotal),
+        onlinePrice: String(onlineTotal),
+        paymentType: 'full',
       };
       successUrl = `${appUrl}/book/success?session_id={CHECKOUT_SESSION_ID}`;
       cancelUrl = `${appUrl}/villa?canceled=1`;
@@ -85,25 +84,26 @@ export async function POST(request: Request) {
       }
 
       account = accountForBoatSlug(booking.boat?.slug);
-      amountDueNow = booking.depositAmount;
-      const isFullPayment = booking.depositAmount >= booking.totalPrice;
-      const balanceDue =
-        Math.round((booking.totalPrice - booking.depositAmount) * 100) / 100;
+      // Charge the full charter price online (no deposit). totalPrice is the
+      // listed cash price; we gross it up so we net it after Stripe fees.
+      const cashPrice = booking.totalPrice;
+      amountDueNow = cashPrice;
+      const onlineTotal = onlineCardPrice(cashPrice);
       const boatName = booking.boat?.name ?? 'Striped World Charters';
 
       customerEmail = booking.guestEmail;
-      productName = `${boatName} — ${isFullPayment ? 'Full Payment' : 'Deposit (50%)'}`;
-      description = isFullPayment
-        ? `${boatName} — ${booking.charterType} (${booking.charterDuration ?? ''}). Paid in full.`
-        : `${boatName} — ${booking.charterType} (${booking.charterDuration ?? ''}). 50% deposit. Balance of $${balanceDue.toLocaleString()} due no later than 30 days before departure.`;
+      productName = `${boatName} — ${booking.charterType}${
+        booking.charterDuration ? ` (${booking.charterDuration})` : ''
+      }`;
+      description = `Online card price $${onlineTotal.toLocaleString(undefined, { minimumFractionDigits: 2 })}. Cash price at the boat: $${cashPrice.toLocaleString()}.`;
       metadata = {
         bookingId: booking.id,
         boat: booking.boat?.slug ?? '',
         guestName: booking.guestName,
         charterDate: booking.charterDate.toISOString(),
-        baseAmount: String(amountDueNow),
-        cardFee: String(Math.round(amountDueNow * CARD_FEE_RATE * 100) / 100),
-        paymentType: isFullPayment ? 'full' : 'deposit',
+        cashPrice: String(cashPrice),
+        onlinePrice: String(onlineTotal),
+        paymentType: 'full',
       };
     } else {
       return NextResponse.json(
@@ -134,13 +134,15 @@ export async function POST(request: Request) {
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
+      // Card only — no ACH / bank-debit options.
+      payment_method_types: ['card'],
       customer_email: customerEmail,
       line_items: [
         {
           quantity: 1,
           price_data: {
             currency: 'usd',
-            unit_amount: toStripeAmountWithFee(amountDueNow),
+            unit_amount: toStripeCents(amountDueNow),
             product_data: { name: productName, description },
           },
         },

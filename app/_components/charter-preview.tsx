@@ -79,7 +79,7 @@ export function CharterPreview() {
                     <p className="text-muted-foreground text-sm mb-4">{c?.desc}</p>
                     <div className="flex items-center gap-3 text-sm">
                       <span className="flex items-center gap-1 text-primary font-mono">
-                        {c?.price}
+                        {c?.price} cash
                       </span>
                       <span className="flex items-center gap-1 text-muted-foreground">
                         <Clock className="w-3.5 h-3.5" />
