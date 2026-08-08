@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     try {
       const appUrl = process.env.NEXTAUTH_URL || '';
       const recipient =
-        process.env.VILLA_BOOKING_EMAIL || 'info@stripedworldcharters.com';
+        process.env.VILLA_BOOKING_EMAIL || 'info@stripedworldcharters.com,junior@swcharter.com';
 
       const htmlBody = `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;background:#0a1628;color:#f0e6d2;padding:30px;border-radius:8px">
