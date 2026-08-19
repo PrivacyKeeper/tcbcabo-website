@@ -210,6 +210,13 @@ export const GALLERY_IMAGES = [
   { src: '/images/gallery/fishing-rods-closeup.jpg', alt: 'Close-up of professional fishing rod setup', category: 'fishing' },
 ];
 
+// Cash Flow is paid through Captain Paco's Clip account (not Stripe).
+// clipPrice = the exact USD amount of the fixed Clip payment link (already
+// grossed up for Clip's fee of 2.99% + $1 MXN + IVA so Paco nets the cash
+// price). clipUrl = the fixed-amount Clip link Paco creates in the Clip app.
+// TODO: replace the two placeholder URLs below with the real links from Paco.
+export const CASH_FLOW_CLIP_PLACEHOLDER = 'CLIP_LINK_PENDING';
+
 export const CASH_FLOW_PACKAGE = {
   name: "Cash Flow — 26' Angler",
   description: 'Private fishing charters for up to 4 guests',
@@ -217,12 +224,16 @@ export const CASH_FLOW_PACKAGE = {
     {
       duration: '5 Hours',
       price: 950,
+      clipPrice: 985,
+      clipUrl: CASH_FLOW_CLIP_PLACEHOLDER, // TODO: Paco's $985 USD Clip link
       startTime: '6:00 AM',
       details: 'Half-day private fishing charter',
     },
     {
       duration: '8 Hours',
       price: 1400,
+      clipPrice: 1451,
+      clipUrl: CASH_FLOW_CLIP_PLACEHOLDER, // TODO: Paco's $1,451 USD Clip link
       startTime: '6:00 AM',
       details: 'Full-day private fishing charter',
     },

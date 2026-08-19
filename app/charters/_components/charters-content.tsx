@@ -60,7 +60,7 @@ function CharterSection({ sectionKey, data }: { sectionKey: string; data: any })
               </div>
               <div className="mb-3">
                 <div className="flex items-baseline gap-2">
-                  <span className="font-display text-2xl font-bold text-gold-gradient">{formatUsd(onlineCardPrice(opt?.price ?? 0))}</span>
+                  <span className="font-display text-2xl font-bold text-gold-gradient">{formatUsd(opt?.clipPrice ?? onlineCardPrice(opt?.price ?? 0))}</span>
                   <span className="text-xs text-muted-foreground">online (card)</span>
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">

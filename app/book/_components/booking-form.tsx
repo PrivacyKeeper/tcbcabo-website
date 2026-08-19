@@ -135,7 +135,14 @@ export function BookingForm() {
   // that grossed up to cover Stripe's fee — full payment online, no deposit.
   const totalPrice = basePrice + additionalGuests + upgradePrice;
   const cashPrice = totalPrice;
-  const onlinePrice = onlineCardPrice(cashPrice);
+  // TCB & Villa pay by card through Stripe (2.9% + $0.30 grossed up).
+  // Cash Flow is paid through Captain Paco's Clip link — the online card price
+  // is the fixed clipPrice on that link (grossed up for Clip's fee).
+  const onlinePrice = isCashFlow
+    ? (selectedOption?.clipPrice ?? cashPrice)
+    : onlineCardPrice(cashPrice);
+  const clipUrl = isCashFlow ? (selectedOption?.clipUrl ?? '') : '';
+  const clipReady = isCashFlow && !!clipUrl && clipUrl !== 'CLIP_LINK_PENDING';
 
   const handleSubmit = useCallback(async () => {
     if (!selectedBoatId) { toast.error('Please select a boat'); return; }
@@ -185,8 +192,23 @@ export function BookingForm() {
         throw new Error('Failed');
       }
 
-      // Booking created — now start Stripe checkout for the deposit/full payment.
+      // Booking created — now send the guest to pay.
       const booking = await res.json().catch(() => null);
+
+      // Cash Flow is paid through Captain Paco's Clip payment link.
+      if (isCashFlow) {
+        if (clipReady) {
+          window.location.href = clipUrl;
+          return;
+        }
+        // Clip link not wired up yet — fall through to the request-received
+        // screen (booking details are already emailed to Paco).
+        setSubmitted(true);
+        toast.success('Booking request submitted!');
+        return;
+      }
+
+      // TCB & Villa — start Stripe checkout for full payment.
       if (booking?.id) {
         try {
           const checkoutRes = await fetch('/api/checkout', {
@@ -214,7 +236,7 @@ export function BookingForm() {
     } finally {
       setSubmitting(false);
     }
-  }, [selectedBoatId, selectedDate, formData, charterType, duration, guestCount, upgrade]);
+  }, [selectedBoatId, selectedDate, formData, charterType, duration, guestCount, upgrade, isCashFlow, clipReady, clipUrl]);
 
   if (submitted) {
     return (
@@ -474,7 +496,11 @@ export function BookingForm() {
                     </span>
                     <span className="text-gold-gradient">{formatUsd(onlinePrice)}</span>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-1">Paid in full now by credit card. Includes card processing.</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {isCashFlow
+                      ? 'Paid in full now by card via our secure Clip payment link. Includes card processing.'
+                      : 'Paid in full now by credit card. Includes card processing.'}
+                  </p>
                 </div>
 
                 <div className="flex justify-between items-center px-1">
